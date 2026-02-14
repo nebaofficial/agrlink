@@ -1,0 +1,172 @@
+{
+  "@@locale": "en",
+  "profile": "Profile",
+  "accountInfo": "Account Information",
+  "registeredFarmer": "Registered Farmer",
+  "cropsListed": "Crops Listed",
+  "totalSold": "Total Sold",
+  "earnings": "Earnings",
+  "ordersPlaced": "Orders Placed",
+  "totalVolume": "Total Volume",
+  "avgRating": "Avg. Rating",
+  "contactInfo": "Contact Information",
+  "phoneNumber": "Phone Number",
+  "emailAddress": "Email Address",
+  "location": "Location",
+  "addisAbaba": "Addis Ababa, Ethiopia",
+  "memberSince": "Member Since",
+  "verificationLevel": "Verification Level",
+  "fullVerification": "Full Verification (Fayda ID)",
+  "accountDetails": "Account Details",
+  "identitySecurity": "Identity & Security",
+  "verificationStatus": "Verification Status",
+  "verifiedAccess": "Verified — Full access enabled",
+  "signOut": "Sign Out",
+  "myFarm": "My Farm",
+  "market": "Market",
+  "orders": "Orders",
+  "logistics": "Logistics",
+  "dashboard": "Dashboard",
+  "quickActions": "Quick Actions",
+  "listNewCrop": "List New Crop",
+  "viewOffers": "View Offers",
+  "myCrops": "My Crops",
+  "viewAll": "View All",
+  "recentActivity": "Recent Activity",
+  "activeListings": "Active Listings",
+  "activeBuyers": "Active Buyers",
+  "noCropsYet": "No crops listed yet",
+  "noActivityYet": "No recent activities",
+  "noRecentActivities": "No recent activities",
+  "manageCropsSales": "Manage your crops and sales",
+  "faydaVerified": "Your Fayda ID has been verified",
+  "thisSeason": "This season",
+  "thisMonth": "This month",
+  "connected": "Connected",
+  "orderReceivedFor": "Order received for {cropName}",
+  "@orderReceivedFor": {
+    "placeholders": {
+      "cropName": {
+        "type": "String"
+      }
+    }
+  },
+  "saleCompleted": "{cropName} sale completed",
+  "@saleCompleted": {
+    "placeholders": {
+      "cropName": {
+        "type": "String"
+      }
+    }
+  },
+  "orderCancelled": "Order for {cropName} was cancelled",
+  "@orderCancelled": {
+    "placeholders": {
+      "cropName": {
+        "type": "String"
+      }
+    }
+  },
+  "ton": "T",
+  "kg": "kg",
+  "marketplaceTitle": "Marketplace",
+  "marketplaceSubtitle": "Browse available crop listings from verified farmers",
+  "searchCrops": "Search crops...",
+  "filterProducts": "Filter Products",
+  "all": "All",
+  "myOrders": "My Orders",
+  "noOrdersYet": "No orders yet",
+  "productDetails": "Product Details",
+  "deleteProduct": "Delete Product",
+  "deleteConfirm": "Are you sure you want to delete this listing?",
+  "productDeleted": "Product deleted",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "orderDetails": "Order Details",
+  "waitingForFarmerAcceptance": "Waiting for farmer acceptance",
+  "waitingForYourAcceptance": "Waiting for your acceptance",
+  "placeOrder": "Place Order",
+  "confirmOrder": "Confirm Order",
+  "orderSummary": "Order Summary",
+  "subtotal": "Subtotal",
+  "platformFee": "Platform Fee (5%)",
+  "totalPayable": "Total Payable",
+  "orderPlacedSuccessfully": "Order placed successfully!",
+  "selectExpectedDeliveryDate": "Please select expected delivery date",
+  "quantityKgLabel": "Quantity (kg)",
+  "maxAvailable": "Max available: {quantity}",
+  "@maxAvailable": {
+    "placeholders": {
+      "quantity": {
+        "type": "double"
+      }
+    }
+  },
+  "expectedDeliveryDate": "Expected Delivery Date",
+  "selectDate": "Select Date",
+  "statusAvailable": "Available",
+  "statusReserved": "Reserved",
+  "statusSold": "Sold",
+  "statusPending": "Pending",
+  "statusAccepted": "Accepted",
+  "statusInTransit": "In Transit",
+  "statusDelivered": "Delivered",
+  "statusCancelled": "Cancelled",
+  "transactionDetails": "Transaction Details",
+  "orderId": "Order ID",
+  "quantity": "Quantity",
+  "pricePerKg": "Price per kg",
+  "netEarnings": "Net Earnings",
+  "deliveryTracking": "Delivery Tracking",
+  "trackingId": "Tracking ID",
+  "transporter": "Transporter",
+  "rejectOrder": "Reject Order",
+  "acceptOrder": "Accept Order",
+  "cancelOrder": "Cancel Order",
+  "payNowEscrow": "Pay Now (Secure Escrow)",
+  "orderStatusUpdatedTo": "Order status updated to {status}",
+  "@orderStatusUpdatedTo": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "productInformation": "Product Information",
+  "noLocation": "No location",
+  "deliveryInformation": "Delivery Information",
+  "expectedDate": "Expected Date",
+  "deliveryArrangementPending": "Delivery arrangement pending payment or confirmation.",
+  "secureCheckout": "Secure Checkout",
+  "paymentSuccessful": "Payment Successful",
+  "paymentEscrowSecured": "Your payment has been secured in escrow. A transporter will be assigned shortly.",
+  "ok": "OK",
+  "paymentMethod": "Payment Method",
+  "login": "Login",
+  "register": "Register",
+  "welcomeToAgriLink": "Welcome to AgriLink",
+  "agrilinkSlogan": "Connecting Farmers directly to Markets",
+  "empoweringAgriculture": "Empowering\nAgriculture",
+  "introSubtitle": "Connect directly with farmers, transporters, and buyers in a fair and transparent marketplace.",
+  "createAccount": "Create Account",
+  "loginSubtitle": "Connect farmers, buyers, and transporters",
+  "email": "Email",
+  "password": "Password",
+  "enterEmail": "Please enter your email",
+  "enterValidEmail": "Please enter a valid email",
+  "enterPassword": "Please enter your password",
+  "passwordTooShort": "Password must be at least 6 characters",
+  "dontHaveAccount": "Don't have an account? ",
+  "fullName": "Full Name",
+  "enterFullName": "Please enter your full name",
+  "phoneOptional": "Phone (Optional)",
+  "accountType": "Account Type",
+  "confirmPassword": "Confirm Password",
+  "passwordsDoNotMatch": "Passwords do not match",
+  "alreadyHaveAccount": "Already have an account? ",
+  "enterPasswordRegister": "Please enter a password",
+  "roleFarmer": "Farmer",
+  "roleBuyer": "Buyer",
+  "roleTransporter": "Transporter",
+  "roleAgent": "Agent"
+}

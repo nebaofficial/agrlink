@@ -1,0 +1,112 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // --- Helper Functions ---
+
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Get user data safely
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Get user role safely (checks for existence first implicitly via get)
+    // Note: If user doc doesn't exist, this might error, but for role checks 
+    // we usually assume a registered user has a profile. 
+    function getUserRole() {
+      return getUserData().role;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && getUserRole() == 'ADMIN';
+    }
+    
+    function isFarmer() {
+      return isAuthenticated() && getUserRole() == 'FARMER';
+    }
+    
+    function isBuyer() {
+      return isAuthenticated() && getUserRole() == 'BUYER';
+    }
+    
+    function isTransporter() {
+      return isAuthenticated() && getUserRole() == 'TRANSPORTER';
+    }
+    
+    function isAgent() {
+      return isAuthenticated() && getUserRole() == 'AGENT';
+    }
+
+    // --- Collections ---
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      // Allow create during registration
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      // Allow update own profile or Admin
+      allow update: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow delete: if isAdmin();
+    }
+    
+    // Products collection
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isFarmer() || isAdmin();
+      allow update, delete: if isAuthenticated() && 
+        (resource.data.farmer_id == request.auth.uid || isAdmin());
+    }
+    
+    // Orders collection
+    match /orders/{orderId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.buyer_id == request.auth.uid || 
+         resource.data.farmer_id == request.auth.uid ||
+         isAdmin());
+      
+      allow create: if isBuyer() || isAdmin();
+      
+      allow update: if isAuthenticated() && 
+        (resource.data.buyer_id == request.auth.uid || 
+         resource.data.farmer_id == request.auth.uid ||
+         isAdmin());
+         
+      allow delete: if isAdmin();
+    }
+    
+    // Deliveries collection
+    match /deliveries/{deliveryId} {
+      allow read: if isAuthenticated();
+      
+      // Allow Agents, Admins, AND Buyers (when creating order/payment) to create deliveries
+      allow create: if isAuthenticated() && (isAgent() || isAdmin() || isBuyer());
+      
+      allow update: if isAuthenticated() && 
+        (resource.data.transporter_id == request.auth.uid ||
+         isTransporter() ||
+         isAgent() ||
+         isAdmin());
+         
+      allow delete: if isAdmin();
+    }
+    
+    // Payments collection
+    match /payments/{paymentId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.payer_id == request.auth.uid || 
+         resource.data.payee_id == request.auth.uid || 
+         isAdmin());
+      
+      // Allow Payer (Buyer) to create payment record
+      allow create: if isAuthenticated() && 
+        (request.resource.data.payer_id == request.auth.uid || isAdmin());
+        
+      allow update: if isAdmin(); // Only admins/system can update payment status manually for now
+      allow delete: if isAdmin();
+    }
+  }
+}

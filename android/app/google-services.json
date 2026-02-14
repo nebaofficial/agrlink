@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "949306283",
+    "project_id": "agrilink-aee9a",
+    "storage_bucket": "agrilink-aee9a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:949306283:android:5b8aa0a66f9bf3087a08ee",
+        "android_client_info": {
+          "package_name": "com.agrilink.agrilink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmThNcYdoYlZmVqGSsIGQmgMujlEQcVJE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
