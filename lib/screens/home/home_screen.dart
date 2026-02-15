@@ -10,7 +10,7 @@ import '../logistics/delivery_dashboard_screen.dart';
 import '../../models/user_role.dart';
 import '../admin/admin_dashboard_screen.dart';
 import '../../services/language_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:agrilink/l10n/generated/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

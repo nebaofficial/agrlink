@@ -10,7 +10,7 @@ import '../../models/order_model.dart';
 import '../../models/product_model.dart';
 import '../auth/login_screen.dart';
 import '../../services/language_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:agrilink/l10n/generated/app_localizations.dart';
 
 class ProfileScreen extends StatelessWidget {
   final UserModel? currentUser;
@@ -64,13 +64,10 @@ class ProfileScreen extends StatelessWidget {
                               color: const Color(0xFF1B4332),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Text(
-                              'AL',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
+                            child: Image.asset(
+                              'assets/images/logo.png',
+                              height: 20,
+                              width: 20,
                             ),
                           ),
                           const SizedBox(width: 8),

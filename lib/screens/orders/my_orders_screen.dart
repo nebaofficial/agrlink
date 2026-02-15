@@ -8,7 +8,7 @@ import '../../models/order_model.dart';
 import '../../models/product_model.dart';
 import '../../widgets/status_badge.dart';
 import 'order_detail_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:agrilink/l10n/generated/app_localizations.dart';
 
 class MyOrdersScreen extends StatelessWidget {
   final UserModel? currentUser;

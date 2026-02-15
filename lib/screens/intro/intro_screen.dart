@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../auth/login_screen.dart';
 import '../auth/register_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:agrilink/l10n/generated/app_localizations.dart';
 
 class IntroScreen extends StatelessWidget {
   const IntroScreen({super.key});

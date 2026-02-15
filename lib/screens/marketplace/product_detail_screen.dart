@@ -9,7 +9,7 @@ import '../../models/user_role.dart';
 import '../../widgets/status_badge.dart';
 import 'create_product_screen.dart';
 import '../orders/create_order_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:agrilink/l10n/generated/app_localizations.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final ProductModel product;

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriLink Splash Screen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 1080px;
+            height: 2400px;
+            background: linear-gradient(to bottom, #8BC34A 0%, #7CB342 30%, #689F38 60%, #558B2F 85%, #2E7D32 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .icon-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.15));
+        }
+
+        .glow {
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .icon {
+            position: relative;
+            z-index: 1;
+            width: 600px;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div class="icon-container">
+        <div class="glow"></div>
+        <img src="icon/AgriIcon.png" alt="AgriLink Logo" class="icon">
+    </div>
+</body>
+</html>

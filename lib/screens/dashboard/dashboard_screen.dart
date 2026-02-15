@@ -9,7 +9,7 @@ import '../../models/product_model.dart';
 import '../marketplace/create_product_screen.dart';
 import '../orders/my_orders_screen.dart';
 import '../../services/language_service.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:agrilink/l10n/generated/app_localizations.dart';
 
 class DashboardScreen extends StatelessWidget {
   final UserModel? currentUser;
@@ -291,9 +291,9 @@ class _FarmerDashboard extends StatelessWidget {
                               color: const Color(0xFF1B4332),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Row(
+                            child: Row(
                               children: [
-                                Text('AL', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                Image.asset('assets/images/logo.png', height: 20, width: 20),
                                 SizedBox(width: 4),
                                 Text('AgriLink', style: TextStyle(color: Colors.white)),
                               ],

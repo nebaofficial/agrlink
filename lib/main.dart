@@ -10,7 +10,7 @@ import 'screens/auth/login_screen.dart';
 import 'screens/intro/intro_screen.dart';
 import 'services/language_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:agrilink/l10n/generated/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

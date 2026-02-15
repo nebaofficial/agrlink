@@ -4,7 +4,7 @@ import '../../services/firestore_service.dart';
 import '../../models/order_model.dart';
 import '../../models/payment_model.dart';
 import '../../models/delivery_model.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:agrilink/l10n/generated/app_localizations.dart';
 
 class PaymentScreen extends StatefulWidget {
   final OrderModel order;

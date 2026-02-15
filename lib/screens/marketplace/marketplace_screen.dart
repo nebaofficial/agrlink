@@ -8,7 +8,7 @@ import '../../models/user_role.dart';
 import '../../widgets/product_card.dart';
 import '../marketplace/product_detail_screen.dart';
 import 'create_product_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:agrilink/l10n/generated/app_localizations.dart';
 
 class MarketplaceScreen extends StatefulWidget {
   const MarketplaceScreen({super.key});

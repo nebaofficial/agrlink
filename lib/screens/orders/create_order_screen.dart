@@ -5,7 +5,7 @@ import '../../services/auth_service.dart';
 import '../../services/firestore_service.dart';
 import '../../models/product_model.dart';
 import '../../models/order_model.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:agrilink/l10n/generated/app_localizations.dart';
 
 class CreateOrderScreen extends StatefulWidget {
   final ProductModel product;

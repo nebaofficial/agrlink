@@ -10,7 +10,7 @@ import '../../widgets/status_badge.dart';
 import '../../models/user_model.dart';
 import '../../models/user_role.dart';
 import 'payment_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:agrilink/l10n/generated/app_localizations.dart';
 
 class OrderDetailScreen extends StatelessWidget {
   final OrderModel order;
