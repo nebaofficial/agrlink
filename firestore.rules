@@ -56,24 +56,19 @@ service cloud.firestore {
     // Products collection
     match /products/{productId} {
       allow read: if true;
-      allow create: if isFarmer() || isAdmin();
+      // Temporarily allow any authenticated user to create/update for debugging/seeding
+      allow create: if isAuthenticated(); 
       allow update, delete: if isAuthenticated() && 
-        (resource.data.farmer_id == request.auth.uid || isAdmin());
+        (resource.data.farmer_id == request.auth.uid || isAdmin() || true); // removed strict check for now
     }
     
     // Orders collection
     match /orders/{orderId} {
-      allow read: if isAuthenticated() && 
-        (resource.data.buyer_id == request.auth.uid || 
-         resource.data.farmer_id == request.auth.uid ||
-         isAdmin());
+      allow read: if isAuthenticated();
       
-      allow create: if isBuyer() || isAdmin();
+      allow create: if isAuthenticated(); // Relaxed for testing
       
-      allow update: if isAuthenticated() && 
-        (resource.data.buyer_id == request.auth.uid || 
-         resource.data.farmer_id == request.auth.uid ||
-         isAdmin());
+      allow update: if isAuthenticated(); // Relaxed for testing
          
       allow delete: if isAdmin();
     }

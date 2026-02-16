@@ -12,6 +12,21 @@ import '../auth/login_screen.dart';
 import '../../services/language_service.dart';
 import 'package:agrilink/l10n/generated/app_localizations.dart';
 
+String _getRoleDisplayName(BuildContext context, UserRole role) {
+  switch (role) {
+    case UserRole.FARMER:
+      return AppLocalizations.of(context)!.roleFarmer;
+    case UserRole.BUYER:
+      return AppLocalizations.of(context)!.roleBuyer;
+    case UserRole.TRANSPORTER:
+      return AppLocalizations.of(context)!.roleTransporter;
+    case UserRole.AGENT:
+      return AppLocalizations.of(context)!.roleAgent;
+    default:
+      return role.value;
+  }
+}
+
 class ProfileScreen extends StatelessWidget {
   final UserModel? currentUser;
 
@@ -157,7 +172,7 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          AppLocalizations.of(context)!.registeredFarmer,
+                          _getRoleDisplayName(context, currentUser!.role),
                           style: const TextStyle(
                             color: Color(0xFF6B7280),
                             fontSize: 14,

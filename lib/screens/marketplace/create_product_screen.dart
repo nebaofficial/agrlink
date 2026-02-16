@@ -303,7 +303,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                 onTap: () => _selectDate(context),
                 child: InputDecorator(
                   decoration: const InputDecoration(
-                    labelText: 'Unexpected Harvest Date',
+                    labelText: 'Harvest Date',
                     prefixIcon: Icon(Icons.calendar_today),
                   ),
                   child: Text(

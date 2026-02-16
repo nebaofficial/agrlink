@@ -139,6 +139,7 @@ class _SeederViewState extends State<SeederView> {
           location: 'Debre Zeit, Oromia',
           harvestDate: DateTime.now().subtract(const Duration(days: 10)),
           status: ProductStatus.AVAILABLE,
+          imageUrl: 'assets/images/products/teff.png',
           createdAt: DateTime.now(),
         ).toFirestore()
       );
@@ -155,6 +156,7 @@ class _SeederViewState extends State<SeederView> {
           location: 'Jimma, Oromia',
           harvestDate: DateTime.now().subtract(const Duration(days: 5)),
           status: ProductStatus.AVAILABLE,
+          imageUrl: 'assets/images/products/coffee.png',
           createdAt: DateTime.now(),
         ).toFirestore()
       );
