@@ -57,7 +57,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verificationLevel => 'Verification Level';
 
   @override
-  String get fullVerification => 'Full Verification (Fayda ID)';
+  String get fullVerification => 'Verified';
 
   @override
   String get accountDetails => 'Account Details';
@@ -126,7 +126,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get manageCropsSales => 'Manage your crops and sales';
 
   @override
-  String get faydaVerified => 'Your Fayda ID has been verified';
+  String get faydaVerified => 'Your account has been verified';
 
   @override
   String get thisSeason => 'This season';
@@ -220,7 +220,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subtotal => 'Subtotal';
 
   @override
-  String get platformFee => 'Platform Fee (5%)';
+  String get platformFee => 'Platform Fee';
 
   @override
   String get totalPayable => 'Total Payable';
@@ -424,4 +424,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roleAgent => 'Agent';
+
+  @override
+  String get publicDashboardTitle => 'Connecting\nFarms to Markets';
+
+  @override
+  String get publicDashboardSubtitle =>
+      'Ethiopia\'s trusted agricultural marketplace — browse live crop listings and real-time prices from verified farmers nationwide.';
+
+  @override
+  String get publicLiveMarketData => 'Live market data';
+
+  @override
+  String get publicStatsSectionTitle => 'Network of Farms';
+
+  @override
+  String get publicStatFarmers => 'Active Farmers';
+
+  @override
+  String get publicStatListings => 'Active Listings';
+
+  @override
+  String get publicStatVolume => 'Daily Volume';
+
+  @override
+  String get publicMarketPrices => 'Market Prices';
+
+  @override
+  String get publicLiveListings => 'Live Marketplace Listings';
+
+  @override
+  String get publicCtaTitle => 'Ready to start trading?';
+
+  @override
+  String get publicCtaSubtitle =>
+      'Sign in to purchase, contact sellers, set favorite orders, and access exclusive marketplace features.';
+
+  @override
+  String get publicLoginToTrade => 'Login to Trade';
+
+  @override
+  String get publicLoading => 'Loading listings...';
+
+  @override
+  String get publicNoListings => 'No listings available right now';
+
+  @override
+  String get publicBecomeAFarmer => 'Become a Farmer';
+
+  @override
+  String get publicBecomeAFarmerDesc =>
+      'Process setup on AgriLink in a matter of 10 min — easy, mobile-friendly registration and start selling to thousands of buyers.';
+
+  @override
+  String get publicJoinMarketplace => 'Join the Marketplace';
 }

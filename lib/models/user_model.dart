@@ -4,23 +4,31 @@ import 'user_role.dart';
 class UserModel {
   final String uid;
   final String fullName;
-  final String? phone;
+  final String phone;
   final String? email;
   final UserRole role;
   final String? faydaId;
   final bool isVerified;
   final double rating;
+  final String? address;
+  final String? city;
+  final String? agentId;
+  final bool autoAcceptOrders;
   final DateTime createdAt;
 
   UserModel({
     required this.uid,
     required this.fullName,
-    this.phone,
+    required this.phone,
     this.email,
     required this.role,
     this.faydaId,
     this.isVerified = false,
     this.rating = 5.0,
+    this.address,
+    this.city,
+    this.agentId,
+    this.autoAcceptOrders = false,
     required this.createdAt,
   });
 
@@ -29,13 +37,19 @@ class UserModel {
     return UserModel(
       uid: doc.id,
       fullName: data['full_name'] ?? '',
-      phone: data['phone'],
+      phone: data['phone'] ?? '',
       email: data['email'],
       role: UserRoleExtension.fromString(data['role'] ?? 'FARMER'),
       faydaId: data['fayda_id'],
       isVerified: data['is_verified'] ?? false,
       rating: (data['rating'] ?? 5.0).toDouble(),
-      createdAt: (data['created_at'] as Timestamp).toDate(),
+      address: data['address'],
+      city: data['city'],
+      agentId: data['agent_id'],
+      autoAcceptOrders: data['auto_accept_orders'] ?? false,
+      createdAt: data['created_at'] != null
+          ? (data['created_at'] as Timestamp).toDate()
+          : DateTime.now(),
     );
   }
 
@@ -48,6 +62,10 @@ class UserModel {
       'fayda_id': faydaId,
       'is_verified': isVerified,
       'rating': rating,
+      'address': address,
+      'city': city,
+      'agent_id': agentId,
+      'auto_accept_orders': autoAcceptOrders,
       'created_at': Timestamp.fromDate(createdAt),
     };
   }
@@ -60,6 +78,10 @@ class UserModel {
     String? faydaId,
     bool? isVerified,
     double? rating,
+    String? address,
+    String? city,
+    String? agentId,
+    bool? autoAcceptOrders,
   }) {
     return UserModel(
       uid: uid,
@@ -70,6 +92,10 @@ class UserModel {
       faydaId: faydaId ?? this.faydaId,
       isVerified: isVerified ?? this.isVerified,
       rating: rating ?? this.rating,
+      address: address ?? this.address,
+      city: city ?? this.city,
+      agentId: agentId ?? this.agentId,
+      autoAcceptOrders: autoAcceptOrders ?? this.autoAcceptOrders,
       createdAt: createdAt,
     );
   }

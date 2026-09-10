@@ -7,6 +7,7 @@ import '../../models/product_model.dart';
 import '../../models/user_model.dart';
 import '../../models/user_role.dart';
 import '../../widgets/status_badge.dart';
+import '../../widgets/product_image.dart';
 import 'create_product_screen.dart';
 import '../orders/create_order_screen.dart';
 import 'package:agrilink/l10n/generated/app_localizations.dart';
@@ -97,18 +98,10 @@ class ProductDetailScreen extends StatelessWidget {
                 Container(
                   height: 250,
                   color: const Color(0xFFE5E7EB),
-                  child: product.imageUrl != null
-                      ? Image.network(
-                          product.imageUrl!,
-                          fit: BoxFit.cover,
-                        )
-                      : Center(
-                          child: Icon(
-                            Icons.agriculture,
-                            size: 100,
-                            color: Colors.grey[400],
-                          ),
-                        ),
+                  child: ProductImage(
+                    imageUrl: product.imageUrl,
+                    fit: BoxFit.cover,
+                  ),
                 ),
 
                 Padding(

@@ -1,1 +1,31 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"agrilink-aee9a","appId":"1:949306283:android:5b8aa0a66f9bf3087a08ee","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"agrilink-aee9a","configurations":{"android":"1:949306283:android:5b8aa0a66f9bf3087a08ee","ios":"1:949306283:ios:1810d5bfd5a37c267a08ee","macos":"1:949306283:ios:1810d5bfd5a37c267a08ee","web":"1:949306283:web:47948ca204f4dc067a08ee","windows":"1:949306283:web:8bc4416ae532b90b7a08ee"}}}}}}
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "agrilink-aee9a",
+          "appId": "1:949306283:android:5b8aa0a66f9bf3087a08ee",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "agrilink-aee9a",
+          "configurations": {
+            "android": "1:949306283:android:5b8aa0a66f9bf3087a08ee",
+            "ios": "1:949306283:ios:1810d5bfd5a37c267a08ee",
+            "macos": "1:949306283:ios:1810d5bfd5a37c267a08ee",
+            "web": "1:949306283:web:47948ca204f4dc067a08ee",
+            "windows": "1:949306283:web:8bc4416ae532b90b7a08ee"
+          }
+        }
+      }
+    }
+  }
+}

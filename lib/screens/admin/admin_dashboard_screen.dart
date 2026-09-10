@@ -8,7 +8,8 @@ import '../profile/profile_screen.dart';
 import '../intro/intro_screen.dart'; // Assuming this exists or will be created/used for logout routing
 
 class AdminDashboardScreen extends StatefulWidget {
-  const AdminDashboardScreen({super.key});
+  final UserModel? currentUser;
+  const AdminDashboardScreen({super.key, this.currentUser});
 
   @override
   State<AdminDashboardScreen> createState() => _AdminDashboardScreenState();
@@ -17,10 +18,10 @@ class AdminDashboardScreen extends StatefulWidget {
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    _AdminOverview(),
-    _UserManagement(),
-    ProfileScreen(), // Admin profile
+  List<Widget> get _widgetOptions => <Widget>[
+    const _AdminOverview(),
+    const _UserManagement(),
+    ProfileScreen(currentUser: widget.currentUser), // Pass Admin profile
   ];
 
   void _onItemTapped(int index) {

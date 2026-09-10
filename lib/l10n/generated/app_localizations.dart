@@ -197,7 +197,7 @@ abstract class AppLocalizations {
   /// No description provided for @fullVerification.
   ///
   /// In en, this message translates to:
-  /// **'Full Verification (Fayda ID)'**
+  /// **'Verified'**
   String get fullVerification;
 
   /// No description provided for @accountDetails.
@@ -335,7 +335,7 @@ abstract class AppLocalizations {
   /// No description provided for @faydaVerified.
   ///
   /// In en, this message translates to:
-  /// **'Your Fayda ID has been verified'**
+  /// **'Your account has been verified'**
   String get faydaVerified;
 
   /// No description provided for @thisSeason.
@@ -509,7 +509,7 @@ abstract class AppLocalizations {
   /// No description provided for @platformFee.
   ///
   /// In en, this message translates to:
-  /// **'Platform Fee (5%)'**
+  /// **'Platform Fee'**
   String get platformFee;
 
   /// No description provided for @totalPayable.
@@ -901,6 +901,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Agent'**
   String get roleAgent;
+
+  /// No description provided for @publicDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting\nFarms to Markets'**
+  String get publicDashboardTitle;
+
+  /// No description provided for @publicDashboardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ethiopia\'s trusted agricultural marketplace — browse live crop listings and real-time prices from verified farmers nationwide.'**
+  String get publicDashboardSubtitle;
+
+  /// No description provided for @publicLiveMarketData.
+  ///
+  /// In en, this message translates to:
+  /// **'Live market data'**
+  String get publicLiveMarketData;
+
+  /// No description provided for @publicStatsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Network of Farms'**
+  String get publicStatsSectionTitle;
+
+  /// No description provided for @publicStatFarmers.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Farmers'**
+  String get publicStatFarmers;
+
+  /// No description provided for @publicStatListings.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Listings'**
+  String get publicStatListings;
+
+  /// No description provided for @publicStatVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Volume'**
+  String get publicStatVolume;
+
+  /// No description provided for @publicMarketPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'Market Prices'**
+  String get publicMarketPrices;
+
+  /// No description provided for @publicLiveListings.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Marketplace Listings'**
+  String get publicLiveListings;
+
+  /// No description provided for @publicCtaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to start trading?'**
+  String get publicCtaTitle;
+
+  /// No description provided for @publicCtaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to purchase, contact sellers, set favorite orders, and access exclusive marketplace features.'**
+  String get publicCtaSubtitle;
+
+  /// No description provided for @publicLoginToTrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Login to Trade'**
+  String get publicLoginToTrade;
+
+  /// No description provided for @publicLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading listings...'**
+  String get publicLoading;
+
+  /// No description provided for @publicNoListings.
+  ///
+  /// In en, this message translates to:
+  /// **'No listings available right now'**
+  String get publicNoListings;
+
+  /// No description provided for @publicBecomeAFarmer.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a Farmer'**
+  String get publicBecomeAFarmer;
+
+  /// No description provided for @publicBecomeAFarmerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Process setup on AgriLink in a matter of 10 min — easy, mobile-friendly registration and start selling to thousands of buyers.'**
+  String get publicBecomeAFarmerDesc;
+
+  /// No description provided for @publicJoinMarketplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Join the Marketplace'**
+  String get publicJoinMarketplace;
 }
 
 class _AppLocalizationsDelegate

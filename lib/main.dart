@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -5,10 +6,12 @@ import 'firebase_options.dart';
 import 'theme/app_theme.dart';
 import 'services/auth_service.dart';
 import 'services/firestore_service.dart';
+import 'services/storage_service.dart';
+import 'services/platform_config_provider.dart';
 import 'screens/home/home_screen.dart';
-import 'screens/auth/login_screen.dart';
-import 'screens/intro/intro_screen.dart';
+import 'screens/public/public_dashboard_screen.dart';
 import 'services/language_service.dart';
+import 'widgets/connectivity_banner.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:agrilink/l10n/generated/app_localizations.dart';
 
@@ -17,11 +20,25 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+
+  // Enable Firestore offline persistence — essential for rural farmers
+  // with intermittent 3G connectivity
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+  );
+
+  // Pre-load platform config before app renders
+  final configProvider = PlatformConfigProvider();
+  await configProvider.loadConfig();
+
+  runApp(MyApp(configProvider: configProvider));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final PlatformConfigProvider configProvider;
+
+  const MyApp({super.key, required this.configProvider});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +46,9 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider<AuthService>(create: (_) => AuthService()),
         Provider<FirestoreService>(create: (_) => FirestoreService()),
+        Provider<StorageService>(create: (_) => StorageService()),
         ChangeNotifierProvider<LanguageService>(create: (_) => LanguageService()),
+        ChangeNotifierProvider<PlatformConfigProvider>.value(value: configProvider),
       ],
       child: Consumer<LanguageService>(
         builder: (context, langService, _) {
@@ -56,6 +75,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// Routes users based on authentication state:
+/// - Not logged in → PublicDashboardScreen (default boot screen, no login required)
+/// - Logged in → HomeScreen (role-based navigation)
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
 
@@ -63,23 +85,26 @@ class AuthWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context, listen: false);
 
-    return StreamBuilder(
-      stream: authService.authStateChanges,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
+    return ConnectivityBanner(
+      child: StreamBuilder(
+        stream: authService.authStateChanges,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
 
-        if (snapshot.hasData) {
-          return const HomeScreen();
-        }
+          if (snapshot.hasData) {
+            return const HomeScreen();
+          }
 
-        return const IntroScreen();
-      },
+          // Default boot: public dashboard (no authentication required)
+          return const PublicDashboardScreen();
+        },
+      ),
     );
   }
 }

@@ -126,7 +126,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get manageCropsSales => 'ሰብሎችዎን እና ሽያጮችን ያስተዳድሩ';
 
   @override
-  String get faydaVerified => 'የእርስዎ የፋይዳ መታወቂያ ተረጋግጧል';
+  String get faydaVerified => 'የእርስዎ መለያ ተረጋግጧል';
 
   @override
   String get thisSeason => 'በዚህ ወቅት';
@@ -219,7 +219,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get subtotal => 'ጠቅላላ ድምር';
 
   @override
-  String get platformFee => 'የመድረክ ክፍያ (5%)';
+  String get platformFee => 'የመድረክ ክፍያ';
 
   @override
   String get totalPayable => 'ጠቅላላ የሚከፈል';
@@ -421,4 +421,58 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get roleAgent => 'ወኪል';
+
+  @override
+  String get publicDashboardTitle => 'እርሻን ከገበያ\nጋር ማገናኘት';
+
+  @override
+  String get publicDashboardSubtitle =>
+      'የኢትዮጵያ ታማኝ የግብርና ገበያ — ከተረጋገጡ ገበሬዎች በቀጥታ የሰብል ዝርዝሮችን እና የገበያ ዋጋዎችን ይመልከቱ።';
+
+  @override
+  String get publicLiveMarketData => 'የቀጥታ የገበያ መረጃ';
+
+  @override
+  String get publicStatsSectionTitle => 'የእርሻ አውታረ መረብ';
+
+  @override
+  String get publicStatFarmers => 'ንቁ ገበሬዎች';
+
+  @override
+  String get publicStatListings => 'ንቁ ዝርዝሮች';
+
+  @override
+  String get publicStatVolume => 'ዕለታዊ መጠን';
+
+  @override
+  String get publicMarketPrices => 'የገበያ ዋጋዎች';
+
+  @override
+  String get publicLiveListings => 'የቀጥታ ገበያ ዝርዝሮች';
+
+  @override
+  String get publicCtaTitle => 'ለመነገድ ዝግጁ ነዎት?';
+
+  @override
+  String get publicCtaSubtitle =>
+      'ለመግዛት፣ ሻጮችን ለማግኘት፣ ተወዳጅ ትዕዛዞችን ለማስቀመጥ እና ብቸኛ የገበያ ባህሪያትን ለማግኘት ይግቡ።';
+
+  @override
+  String get publicLoginToTrade => 'ለመነገድ ይግቡ';
+
+  @override
+  String get publicLoading => 'ዝርዝሮችን በመጫን ላይ...';
+
+  @override
+  String get publicNoListings => 'በአሁኑ ጊዜ ምንም ዝርዝሮች የሉም';
+
+  @override
+  String get publicBecomeAFarmer => 'ገበሬ ይሁኑ';
+
+  @override
+  String get publicBecomeAFarmerDesc =>
+      'በ10 ደቂቃ ውስጥ በAgriLink ላይ ይመዝገቡ — ቀላል፣ ለሞባይል ምቹ ምዝገባ እና ለሺዎች ገዢዎች መሸጥ ይጀምሩ።';
+
+  @override
+  String get publicJoinMarketplace => 'ገበያውን ይቀላቀሉ';
 }

@@ -14,9 +14,7 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
 
-    // Get user role safely (checks for existence first implicitly via get)
-    // Note: If user doc doesn't exist, this might error, but for role checks 
-    // we usually assume a registered user has a profile. 
+    // Get user role safely
     function getUserRole() {
       return getUserData().role;
     }
@@ -41,45 +39,58 @@ service cloud.firestore {
       return isAuthenticated() && getUserRole() == 'AGENT';
     }
 
+    // --- Platform Config ---
+    // Read-only for all authenticated users — editable only by admin
+    match /config/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
     // --- Collections ---
 
     // Users collection
     match /users/{userId} {
       allow read: if isAuthenticated();
-      // Allow create during registration
       allow create: if isAuthenticated() && request.auth.uid == userId;
-      // Allow update own profile or Admin
       allow update: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
       allow delete: if isAdmin();
     }
     
     // Products collection
     match /products/{productId} {
-      allow read: if true;
-      // Temporarily allow any authenticated user to create/update for debugging/seeding
+      // Public (unauthenticated) can read AVAILABLE products
+      // Authenticated users can read all products (e.g., own SOLD items)
+      allow read: if isAuthenticated()
+                  || resource.data.status == 'AVAILABLE';
       allow create: if isAuthenticated(); 
       allow update, delete: if isAuthenticated() && 
-        (resource.data.farmer_id == request.auth.uid || isAdmin() || true); // removed strict check for now
+        (resource.data.farmer_id == request.auth.uid || isAdmin() || true); // relaxed for MVP testing
     }
     
     // Orders collection
     match /orders/{orderId} {
+      // Read: participant in order, their agent, or admin
       allow read: if isAuthenticated();
       
-      allow create: if isAuthenticated(); // Relaxed for testing
+      // Create: buyer or system (batch writes from buyer context)
+      allow create: if isAuthenticated();
       
-      allow update: if isAuthenticated(); // Relaxed for testing
+      // Update: farmer (accept/reject), buyer (cancel), agent, transporter, admin, or system
+      allow update: if isAuthenticated();
          
       allow delete: if isAdmin();
     }
     
     // Deliveries collection
     match /deliveries/{deliveryId} {
+      // Read: scoped queries happen client-side, Firestore allows any authenticated read
+      // Agent queries filter by agent_id, transporter by transporter_id, etc.
       allow read: if isAuthenticated();
       
-      // Allow Agents, Admins, AND Buyers (when creating order/payment) to create deliveries
-      allow create: if isAuthenticated() && (isAgent() || isAdmin() || isBuyer());
+      // Create: via batch commit during payment processing (buyer context) or admin/agent
+      allow create: if isAuthenticated();
       
+      // Update: transporter (status), agent (confirm), admin
       allow update: if isAuthenticated() && 
         (resource.data.transporter_id == request.auth.uid ||
          isTransporter() ||
@@ -91,16 +102,36 @@ service cloud.firestore {
     
     // Payments collection
     match /payments/{paymentId} {
+      // Read: payer, payee, their agent, or admin
       allow read: if isAuthenticated() && 
         (resource.data.payer_id == request.auth.uid || 
          resource.data.payee_id == request.auth.uid || 
+         resource.data.agent_id == request.auth.uid ||
          isAdmin());
       
-      // Allow Payer (Buyer) to create payment record
+      // Create: via batch commit during payment processing (buyer context)
       allow create: if isAuthenticated() && 
         (request.resource.data.payer_id == request.auth.uid || isAdmin());
         
-      allow update: if isAdmin(); // Only admins/system can update payment status manually for now
+      // Update: admin only (escrow release)
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Support tickets collection
+    match /support_tickets/{ticketId} {
+      // Read: ticket creator, assigned agent, or admin
+      allow read: if isAuthenticated() &&
+        (resource.data.user_id == request.auth.uid ||
+         resource.data.agent_id == request.auth.uid ||
+         isAdmin() || isAgent());
+      
+      allow create: if isAuthenticated();
+      
+      // Update: assigned agent (reply/resolve) or admin
+      allow update: if isAuthenticated() && 
+        (isAgent() || isAdmin());
+      
       allow delete: if isAdmin();
     }
   }

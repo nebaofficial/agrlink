@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/background_pattern.dart';
@@ -20,6 +21,8 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _cityController = TextEditingController();
   
   UserRole _selectedRole = UserRole.FARMER;
   bool _isLoading = false;
@@ -29,6 +32,14 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+
+  // Roles available for registration (ADMIN excluded)
+  final List<UserRole> _availableRoles = [
+    UserRole.FARMER,
+    UserRole.BUYER,
+    UserRole.TRANSPORTER,
+    UserRole.AGENT,
+  ];
 
   @override
   void initState() {
@@ -61,12 +72,20 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _addressController.dispose();
+    _cityController.dispose();
     _animationController.dispose();
     super.dispose();
   }
 
-  Future<void> _register() async {
+  Future<void> _registerWithEmail() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_phoneController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Phone number is required')),
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -77,8 +96,14 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
         password: _passwordController.text,
         fullName: _nameController.text.trim(),
         role: _selectedRole,
-        phone: _phoneController.text.trim().isNotEmpty 
-            ? _phoneController.text.trim() 
+        phone: _phoneController.text.trim().startsWith('+')
+            ? _phoneController.text.trim()
+            : '+251${_phoneController.text.trim()}',
+        address: _addressController.text.trim().isNotEmpty
+            ? _addressController.text.trim()
+            : null,
+        city: _cityController.text.trim().isNotEmpty
+            ? _cityController.text.trim()
             : null,
       );
 
@@ -90,12 +115,33 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
       }
     } catch (e) {
       if (mounted) {
+        String msg = e.toString().replaceAll('Exception: ', '');
+        if (e is FirebaseAuthException) {
+          msg = _friendlyRegisterError(e.code);
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration failed: ${e.toString()}')),
+          SnackBar(content: Text(msg)),
         );
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  String _friendlyRegisterError(String code) {
+    switch (code) {
+      case 'email-already-in-use':
+        return 'An account with this email already exists';
+      case 'invalid-email':
+        return 'Invalid email address';
+      case 'weak-password':
+        return 'Password is too weak. Use at least 6 characters';
+      case 'operation-not-allowed':
+        return 'Email registration is not enabled';
+      case 'network-request-failed':
+        return 'No internet connection. Please check your network';
+      default:
+        return 'Registration failed. Please try again';
     }
   }
 
@@ -117,7 +163,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true, // Allow background to go behind app bar
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.createAccount),
         elevation: 0,
@@ -173,18 +219,45 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                       ),
                       const SizedBox(height: 16),
 
-                      // Phone (Optional)
+                      // Phone (Required)
                       TextFormField(
                         controller: _phoneController,
                         keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.phoneOptional,
-                          prefixIcon: const Icon(Icons.phone_outlined),
+                        decoration: const InputDecoration(
+                          labelText: 'Phone Number (Required)',
+                          prefixIcon: Icon(Icons.phone_outlined),
+                          prefixText: '+251 ',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Phone number is required';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Address
+                      TextFormField(
+                        controller: _addressController,
+                        decoration: const InputDecoration(
+                          labelText: 'Address',
+                          prefixIcon: Icon(Icons.location_on_outlined),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // City / Region
+                      TextFormField(
+                        controller: _cityController,
+                        decoration: const InputDecoration(
+                          labelText: 'City / Region',
+                          prefixIcon: Icon(Icons.location_city_outlined),
                         ),
                       ),
                       const SizedBox(height: 24),
 
-                      // Role Selection
+                      // Role Selection (ADMIN excluded)
                       Text(
                         AppLocalizations.of(context)!.accountType,
                         style: const TextStyle(
@@ -197,7 +270,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                       Wrap(
                         spacing: 8.0,
                         runSpacing: 8.0,
-                        children: UserRole.values.map((role) {
+                        children: _availableRoles.map((role) {
                           return ChoiceChip(
                             label: Text(_getRoleDisplayName(role)),
                             selected: _selectedRole == role,
@@ -276,7 +349,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
 
                       // Register Button
                       ElevatedButton(
-                        onPressed: _isLoading ? null : _register,
+                        onPressed: _isLoading ? null : _registerWithEmail,
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
@@ -297,6 +370,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                 style: const TextStyle(fontSize: 16),
                               ),
                       ),
+
                       const SizedBox(height: 16),
 
                       // Login Link

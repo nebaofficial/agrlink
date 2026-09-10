@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../services/auth_service.dart';
 import '../../services/firestore_service.dart';
+import '../../services/storage_service.dart';
 import '../../models/product_model.dart';
 
 class CreateProductScreen extends StatefulWidget {
@@ -62,12 +63,60 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-    }
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Text(
+                  'Select Photo Source',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2D6A4F),
+                  ),
+                ),
+              ),
+              const Divider(height: 1),
+              ListTile(
+                leading: const Icon(Icons.photo_library, color: Color(0xFF2D6A4F)),
+                title: const Text('Choose from Gallery'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+                  if (pickedFile != null) {
+                    setState(() {
+                      _imageFile = File(pickedFile.path);
+                    });
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera, color: Color(0xFF2D6A4F)),
+                title: const Text('Take a Photo (Camera)'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+                  if (pickedFile != null) {
+                    setState(() {
+                      _imageFile = File(pickedFile.path);
+                    });
+                  }
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -102,11 +151,11 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
 
       if (user == null) throw Exception('User not logged in');
 
-      // TODO: Upload image to Firebase Storage and get URL
+      // Upload image to Firebase Storage and get URL
       String? imageUrl = widget.productToEdit?.imageUrl;
       if (_imageFile != null) {
-        // Placeholder for storage upload
-        // imageUrl = await storageService.uploadProductImage(_imageFile!);
+        final storageService = Provider.of<StorageService>(context, listen: false);
+        imageUrl = await storageService.uploadProductImage(_imageFile!);
       }
 
       final product = ProductModel(
@@ -183,7 +232,9 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                           )
                         : (widget.productToEdit?.imageUrl != null
                             ? DecorationImage(
-                                image: NetworkImage(widget.productToEdit!.imageUrl!),
+                                image: widget.productToEdit!.imageUrl!.startsWith('http')
+                                    ? NetworkImage(widget.productToEdit!.imageUrl!) as ImageProvider
+                                    : AssetImage(widget.productToEdit!.imageUrl!) as ImageProvider,
                                 fit: BoxFit.cover,
                               )
                             : null),

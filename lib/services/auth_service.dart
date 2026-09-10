@@ -42,7 +42,9 @@ class AuthService {
     required String password,
     required String fullName,
     required UserRole role,
-    String? phone,
+    required String phone,
+    String? address,
+    String? city,
   }) async {
     try {
       // Create Firebase Auth user
@@ -58,6 +60,8 @@ class AuthService {
         email: email,
         phone: phone,
         role: role,
+        address: address,
+        city: city,
         createdAt: DateTime.now(),
       );
 
@@ -73,6 +77,8 @@ class AuthService {
   }
 
   // Sign in with phone (OTP)
+  // On Android: Firebase uses Play Integrity / SafetyNet for automatic verification
+  // On iOS: Firebase handles reCAPTCHA automatically via APNs
   Future<void> signInWithPhone({
     required String phoneNumber,
     required Function(String verificationId) codeSent,
@@ -86,8 +92,10 @@ class AuthService {
       codeSent: (String verificationId, int? resendToken) {
         codeSent(verificationId);
       },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-      timeout: const Duration(seconds: 60),
+      codeAutoRetrievalTimeout: (String verificationId) {
+        // Called when auto-retrieval times out — user must enter OTP manually
+      },
+      timeout: const Duration(seconds: 120),
     );
   }
 
@@ -103,13 +111,21 @@ class AuthService {
     return await _auth.signInWithCredential(credential);
   }
 
+  // Check if user profile exists in Firestore
+  Future<bool> userProfileExists(String uid) async {
+    final doc = await _firestore.collection('users').doc(uid).get();
+    return doc.exists;
+  }
+
   // Create user profile after phone auth
   Future<void> createUserProfile({
     required String uid,
     required String fullName,
     required UserRole role,
-    String? phone,
+    required String phone,
     String? email,
+    String? address,
+    String? city,
   }) async {
     final userModel = UserModel(
       uid: uid,
@@ -117,6 +133,8 @@ class AuthService {
       phone: phone,
       email: email,
       role: role,
+      address: address,
+      city: city,
       createdAt: DateTime.now(),
     );
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/product_model.dart';
 import '../widgets/status_badge.dart';
+import '../widgets/product_image.dart';
 
 class ProductCard extends StatelessWidget {
   final ProductModel product;
@@ -36,18 +37,10 @@ class ProductCard extends StatelessWidget {
                   color: const Color(0xFFE5E7EB),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: product.imageUrl != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: _buildProductImage(product.imageUrl!),
-                      )
-                    : Center(
-                        child: Icon(
-                          Icons.agriculture,
-                          size: 64,
-                          color: Colors.grey[400],
-                        ),
-                      ),
+                child: ProductImage(
+                  imageUrl: product.imageUrl,
+                  borderRadius: 8,
+                ),
               ),
               const SizedBox(height: 12),
               
@@ -198,39 +191,5 @@ class ProductCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Widget _buildProductImage(String imageUrl) {
-    if (imageUrl.startsWith('http')) {
-      return Image.network(
-        imageUrl,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Center(
-            child: Icon(Icons.broken_image, size: 40, color: Colors.grey[400]),
-          );
-        },
-      );
-    } else {
-      return Image.asset(
-        imageUrl,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.image_not_supported, size: 40, color: Colors.grey[400]),
-                const SizedBox(height: 4),
-                Text(
-                  'Image not found',
-                  style: TextStyle(fontSize: 10, color: Colors.grey[500]),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    }
   }
 }

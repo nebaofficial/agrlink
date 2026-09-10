@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -7,23 +8,72 @@ import '../../models/order_model.dart';
 import '../../models/product_model.dart';
 import '../../models/delivery_model.dart';
 import '../../widgets/status_badge.dart';
+import '../../widgets/product_image.dart';
 import '../../models/user_model.dart';
 import '../../models/user_role.dart';
 import 'payment_screen.dart';
+import 'delivery_tracking_screen.dart';
 import 'package:agrilink/l10n/generated/app_localizations.dart';
 
-class OrderDetailScreen extends StatelessWidget {
+class OrderDetailScreen extends StatefulWidget {
   final OrderModel order;
 
   const OrderDetailScreen({super.key, required this.order});
 
   @override
+  State<OrderDetailScreen> createState() => _OrderDetailScreenState();
+}
+
+class _OrderDetailScreenState extends State<OrderDetailScreen> {
+  bool _isLoading = false;
+  Timer? _countdownTimer;
+  Duration _timeRemaining = Duration.zero;
+
+  OrderModel get order => widget.order;
+
+  @override
+  void initState() {
+    super.initState();
+    _startCountdown();
+  }
+
+  @override
+  void dispose() {
+    _countdownTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startCountdown() {
+    if (order.status != OrderStatus.PENDING || order.autoAcceptAt == null) return;
+
+    _updateTimeRemaining();
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _updateTimeRemaining();
+    });
+  }
+
+  void _updateTimeRemaining() {
+    if (order.autoAcceptAt == null) return;
+    final remaining = order.autoAcceptAt!.difference(DateTime.now());
+    if (remaining.isNegative) {
+      _countdownTimer?.cancel();
+      setState(() => _timeRemaining = Duration.zero);
+    } else {
+      setState(() => _timeRemaining = remaining);
+    }
+  }
+
+  String _formatDuration(Duration d) {
+    final hours = d.inHours;
+    final minutes = d.inMinutes % 60;
+    final seconds = d.inSeconds % 60;
+    return '${hours}h ${minutes.toString().padLeft(2, '0')}m ${seconds.toString().padLeft(2, '0')}s';
+  }
+
+  @override
   Widget build(BuildContext context) {
     final firestoreService = Provider.of<FirestoreService>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
-    final currentUser = authService.currentUser;
-    final isFarmer = currentUser?.uid == order.farmerId;
-    final isBuyer = currentUser?.uid == order.buyerId;
 
     final currencyFormat = NumberFormat.currency(symbol: 'ETB ', decimalDigits: 0);
     final dateFormat = DateFormat('MMM dd, yyyy');
@@ -63,32 +113,93 @@ class OrderDetailScreen extends StatelessWidget {
                         color: _getStatusColor(order.status),
                       ),
                       const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${AppLocalizations.of(context)!.statusPending}: ${_getLocalizedStatus(context, order.status)}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: _getStatusColor(order.status),
-                            ),
-                          ),
-                          if (order.status == OrderStatus.PENDING && isActualFarmer)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Text(
-                              AppLocalizations.of(context)!.waitingForYourAcceptance,
-                              style: const TextStyle(fontSize: 12, color: Colors.grey),
+                              '${AppLocalizations.of(context)!.statusPending}: ${_getLocalizedStatus(context, order.status)}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: _getStatusColor(order.status),
+                              ),
                             ),
-                          if (order.status == OrderStatus.PENDING && isActualBuyer)
-                            Text(
-                              AppLocalizations.of(context)!.waitingForFarmerAcceptance,
-                              style: const TextStyle(fontSize: 12, color: Colors.grey),
-                            ),
-                        ],
+                            if (order.autoAccepted)
+                              const Text(
+                                '⚡ Auto-accepted (farmer didn\'t respond in time)',
+                                style: TextStyle(fontSize: 12, color: Color(0xFFD97706)),
+                              ),
+                            if (order.status == OrderStatus.PENDING && isActualFarmer)
+                              Text(
+                                AppLocalizations.of(context)!.waitingForYourAcceptance,
+                                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                            if (order.status == OrderStatus.PENDING && isActualBuyer)
+                              Text(
+                                AppLocalizations.of(context)!.waitingForFarmerAcceptance,
+                                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
+
+                // Auto-accept countdown timer (for PENDING orders)
+                if (order.status == OrderStatus.PENDING && order.autoAcceptAt != null)
+                  Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF3C7),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFFCD34D)),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFFDE68A),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.timer, color: Color(0xFFD97706), size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Auto-accept countdown',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF92400E),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                _timeRemaining.inSeconds > 0
+                                    ? _formatDuration(_timeRemaining)
+                                    : 'Processing auto-accept...',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: _timeRemaining.inHours < 1
+                                      ? const Color(0xFFDC2626)
+                                      : const Color(0xFFD97706),
+                                  fontFeatures: const [FontFeature.tabularFigures()],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 const SizedBox(height: 24),
 
                 // Product Info
@@ -121,15 +232,13 @@ class OrderDetailScreen extends StatelessWidget {
                                     color: Colors.grey[200],
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: product.imageUrl != null
-                                      ? ClipRRect(
-                                          borderRadius: BorderRadius.circular(8),
-                                          child: Image.network(
-                                            product.imageUrl!,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        )
-                                      : const Icon(Icons.agriculture, color: Colors.grey),
+                                  child: ProductImage(
+                                    imageUrl: product.imageUrl,
+                                    width: 60,
+                                    height: 60,
+                                    borderRadius: 8,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
@@ -191,7 +300,7 @@ class OrderDetailScreen extends StatelessWidget {
                         ),
                         const Divider(height: 24),
                         _DetailRow(
-                          label: AppLocalizations.of(context)!.totalVolume, // Reusing totalVolume for Total Amount if needed, or keeping it
+                          label: AppLocalizations.of(context)!.totalVolume,
                           value: currencyFormat.format(order.totalAmount),
                           isBold: true,
                           color: const Color(0xFF2D6A4F),
@@ -199,16 +308,16 @@ class OrderDetailScreen extends StatelessWidget {
                         if (isActualFarmer) ...[
                           const Divider(height: 24),
                           _DetailRow(
-                            label: AppLocalizations.of(context)!.platformFee,
+                            label: '${AppLocalizations.of(context)!.platformFee} (${order.commissionPerKg.toStringAsFixed(0)} ETB/kg)',
                             value: '- ${currencyFormat.format(order.commission)}',
-                            color: Colors.red[700],
+                            color: const Color(0xFFEA580C),
                           ),
                           const Divider(height: 24),
                           _DetailRow(
                             label: AppLocalizations.of(context)!.netEarnings,
                             value: currencyFormat.format(order.netToFarmer),
                             isBold: true,
-                            color: const Color(0xFF2D6A4F),
+                            color: const Color(0xFF059669),
                           ),
                         ],
                       ],
@@ -217,13 +326,13 @@ class OrderDetailScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Delivery Info
-                FutureBuilder<DeliveryModel?>(
-                  future: firestoreService.getDeliveryByOrderId(order.id),
+                // Delivery Info (live stream)
+                StreamBuilder<DeliveryModel?>(
+                  stream: firestoreService.streamDeliveryByOrderId(order.id),
                   builder: (context, snapshot) {
                     final delivery = snapshot.data;
 
-                    // If no delivery record yet (e.g. before payment/assignment)
+                    // If no delivery record yet
                     if (delivery == null) {
                       return Card(
                         child: Padding(
@@ -255,54 +364,82 @@ class OrderDetailScreen extends StatelessWidget {
                       );
                     }
 
-                    return Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  AppLocalizations.of(context)!.deliveryTracking,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      AppLocalizations.of(context)!.deliveryTracking,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    StatusBadge(
+                                      status: delivery.status.value,
+                                      type: StatusType.delivery,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                if (order.expectedDelivery != null)
+                                  _DetailRow(
+                                    label: AppLocalizations.of(context)!.expectedDate,
+                                    value: dateFormat.format(order.expectedDelivery!),
                                   ),
-                                ),
-                                StatusBadge(
-                                  status: delivery.status.value,
-                                  type: StatusType.delivery,
-                                ),
+                                const SizedBox(height: 8),
+                                _DetailRow(
+                                    label: AppLocalizations.of(context)!.trackingId,
+                                    value: delivery.id.substring(0, 8).toUpperCase()),
+                                const SizedBox(height: 8),
+                                if (delivery.transporterId != null)
+                                  FutureBuilder<UserModel?>(
+                                      future: firestoreService.getUser(delivery.transporterId!),
+                                      builder: (context, userSnap) {
+                                        if (userSnap.hasData) {
+                                          return _DetailRow(
+                                            label: AppLocalizations.of(context)!.transporter,
+                                            value: userSnap.data!.fullName,
+                                          );
+                                        }
+                                        return const SizedBox.shrink();
+                                      }),
                               ],
                             ),
-                            const SizedBox(height: 16),
-                            if (order.expectedDelivery != null)
-                              _DetailRow(
-                                label: AppLocalizations.of(context)!.expectedDate,
-                                value: dateFormat.format(order.expectedDelivery!),
-                              ),
-                            const SizedBox(height: 8),
-                            _DetailRow(
-                                label: AppLocalizations.of(context)!.trackingId,
-                                value: delivery.id.substring(0, 8).toUpperCase()),
-                            const SizedBox(height: 8),
-                            if (delivery.transporterId != null)
-                              FutureBuilder<UserModel?>(
-                                  future: firestoreService.getUser(delivery.transporterId!),
-                                  builder: (context, userSnap) {
-                                    if (userSnap.hasData) {
-                                      return _DetailRow(
-                                        label: AppLocalizations.of(context)!.transporter,
-                                        value: userSnap.data!.fullName,
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  }),
-                          ],
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 12),
+                        // Track Delivery button
+                        ElevatedButton.icon(
+                          icon: const Icon(Icons.gps_fixed),
+                          label: const Text('Track Delivery'),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => DeliveryTrackingScreen(
+                                  orderId: order.id,
+                                  order: order,
+                                ),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2D6A4F),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),
@@ -371,22 +508,42 @@ class OrderDetailScreen extends StatelessWidget {
   }
 
   Future<void> _updateStatus(BuildContext context, FirestoreService service, OrderStatus newStatus) async {
+    if (_isLoading) return;
+    setState(() => _isLoading = true);
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
     try {
       final updatedOrder = order.copyWith(status: newStatus);
       await service.updateOrder(updatedOrder);
       if (context.mounted) {
+        Navigator.pop(context); // dismiss loading dialog
         String localizedStatus = _getLocalizedStatus(context, newStatus);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.orderStatusUpdatedTo(localizedStatus))),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.orderStatusUpdatedTo(localizedStatus)),
+            backgroundColor: const Color(0xFF2D6A4F),
+          ),
         );
-        Navigator.pop(context);
+        Navigator.pop(context); // go back to previous screen
       }
     } catch (e) {
       if (context.mounted) {
-         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
+        Navigator.pop(context); // dismiss loading dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -435,13 +592,13 @@ class OrderDetailScreen extends StatelessWidget {
       case OrderStatus.ACCEPTED:
         return AppLocalizations.of(context)!.statusAccepted;
       case OrderStatus.PAID:
-        return AppLocalizations.of(context)!.statusSold; // Or add statusPaid if needed
+        return AppLocalizations.of(context)!.statusSold;
       case OrderStatus.IN_TRANSIT:
         return AppLocalizations.of(context)!.statusInTransit;
       case OrderStatus.DELIVERED:
         return AppLocalizations.of(context)!.statusDelivered;
       case OrderStatus.COMPLETED:
-        return AppLocalizations.of(context)!.saleCompleted(''); // This is a placeholder, need a better one
+        return AppLocalizations.of(context)!.saleCompleted('');
       case OrderStatus.CANCELLED:
         return AppLocalizations.of(context)!.statusCancelled;
     }
@@ -466,11 +623,13 @@ class _DetailRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 14,
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 14,
+            ),
           ),
         ),
         Text(

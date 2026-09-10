@@ -10,7 +10,7 @@ import '../../widgets/status_badge.dart';
 import 'order_detail_screen.dart';
 import 'package:agrilink/l10n/generated/app_localizations.dart';
 
-class MyOrdersScreen extends StatelessWidget {
+class MyOrdersScreen extends StatefulWidget {
   final UserModel? currentUser;
 
   const MyOrdersScreen({
@@ -19,16 +19,29 @@ class MyOrdersScreen extends StatelessWidget {
   });
 
   @override
+  State<MyOrdersScreen> createState() => _MyOrdersScreenState();
+}
+
+class _MyOrdersScreenState extends State<MyOrdersScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Process any expired PENDING orders (auto-accept after 6h)
+    final firestoreService = Provider.of<FirestoreService>(context, listen: false);
+    firestoreService.processExpiredOrders();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (currentUser == null) {
+    if (widget.currentUser == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
     final firestoreService = Provider.of<FirestoreService>(context, listen: false);
-    final isBuyer = currentUser!.role.value == 'BUYER';
-    final isFarmer = currentUser!.role.value == 'FARMER';
+    final isBuyer = widget.currentUser!.role.value == 'BUYER';
+
 
     return Scaffold(
       appBar: AppBar(
@@ -36,8 +49,8 @@ class MyOrdersScreen extends StatelessWidget {
       ),
       body: StreamBuilder<List<OrderModel>>(
         stream: isBuyer
-            ? firestoreService.streamBuyerOrders(currentUser!.uid)
-            : firestoreService.streamFarmerOrders(currentUser!.uid),
+            ? firestoreService.streamBuyerOrders(widget.currentUser!.uid)
+            : firestoreService.streamFarmerOrders(widget.currentUser!.uid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
