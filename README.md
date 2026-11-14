@@ -117,14 +117,13 @@ Suggested screenshots:
 
 **5-Minute Project Demonstration**
 
-[Watch the AgriLink Project Presentation](ADD_YOUR_VIDEO_LINK_HERE)
+[Watch the AgriLink Project Presentation](https://drive.google.com/file/d/17W77T2qhzx1dibf50A7fMeQnqK21Svgz/view?usp=sharing)
 
 The video demonstrates the project purpose, main application features, user workflows, and technology implementation.
 
 ## 10. GitHub Repository
 
-**Project Source Code:** ADD_YOUR_GITHUB_REPOSITORY_LINK_HERE
-
+**Project Source Code:** https://github.com/nebaofficial/agrlink
 ## 11. Developer Information
 
 | Full Name | CTC ID | Responsibility |
